@@ -1,0 +1,5 @@
+PSQL_DB: proxy_account_service_v1
+PSQL_address: localhost
+PSQL_password: HYDR4HYDR4
+PSQL_port: 5432
+PSQL_username: postgres
