@@ -40,7 +40,7 @@ class Proxy(db.Model):
         return f'{self.id} {self.ip_address}:{self.port}'
 
 
-class Resource(db.Model):
+class Net_Resource(db.Model):
     __tablename__ = 'resources'
 
     id = db.Column(BigInteger, primary_key=True,
@@ -59,8 +59,8 @@ class Lock(db.Model):
 
     id = db.Column(BigInteger, primary_key=True,
                    autoincrement=True, nullable=False)
-    locked_account = db.Column(BigInteger, db.ForeignKey("accounts.id"), nullable=False)
-    locked_proxy = db.Column(BigInteger, db.ForeignKey("proxies.id"), nullable=False)
+    locked_account = db.Column(BigInteger, db.ForeignKey("accounts.id"), nullable=True)
+    locked_proxy = db.Column(BigInteger, db.ForeignKey("proxies.id"), nullable=True)
     locked_at = db.Column(DateTime, nullable=False, default=datetime.utcnow)
     expires_at = db.Column(DateTime)
 

@@ -1,5 +1,5 @@
+from .models import Account, Proxy, Net_Resource, Lock
 from . import mallow
-from .models import Account, Proxy, Resource, Lock
 
 
 class AccountSchema(mallow.Schema):
@@ -24,7 +24,7 @@ class ResourceSchema(mallow.Schema):
         fields = ("id", "name",
                   "abbreviation",
                   "resource_type")
-        model = Resource
+        model = Net_Resource
 
 
 class LockSchema(mallow.Schema):
@@ -45,4 +45,4 @@ resource_schema = ResourceSchema()
 resources_schema = ResourceSchema(many=True)
 
 lock_schema = LockSchema()
-lockss_schema = LockSchema(many=True)
+locks_schema = LockSchema(many=True)
