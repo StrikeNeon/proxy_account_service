@@ -1,5 +1,5 @@
-migrations
-*.yaml
+/migrations
+conf.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
