@@ -45,7 +45,7 @@ class Net_Resource(db.Model):
 
     id = db.Column(BigInteger, primary_key=True,
                    autoincrement=True, nullable=False)
-    name = db.Column(String(length=100), nullable=False),
+    name = db.Column(String(length=100), nullable=False, unique=True)
     abbreviation = db.Column(String(length=10), nullable=False, unique=True, index=True)
     resource_type = db.Column(String(length=100), nullable=False)
     valid_accounts = db.relationship("Account", backref="resources", lazy=True)

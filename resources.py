@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import exc as sql_exceptions
 from flask import request
 from flask_restful import Resource
 from . import db
@@ -32,11 +33,57 @@ class Account_maker(Resource):
         return account_schema.dump(new_account)
 
 
-class All_accounts(Resource):
+class Multiple_account_ops(Resource):
 
     def get(self):
-        accounts = Account.query.all()
-        return accounts_schema.dump(accounts)
+        filter_type = request.args.get('filter', None)
+        if not filter_type:
+            accounts = Account.query.all()
+            return accounts_schema.dump(accounts)
+
+    def patch(self):
+        accounts = request.json.get('accounts', None)
+        if not accounts or type(accounts) != list:
+            return {"error": "account ids were not supplied or key malformed"}
+        action = request.args.get('action')
+        if action == "lock":
+            locked_accounts = []
+            for account_id in accounts:
+                if account_id.get("expires_at", None):
+                    new_lock = Lock(
+                            locked_account=account_id.get('account_id'),
+                            locked_at=datetime.now(),
+                            expires_at=account_id.get('expires_at')
+                        )
+                    db.session.add(new_lock)
+                    db.session.commit()
+                    locked_accounts.append(new_lock)
+                else:
+                    print({"error": "No expiry provided",
+                           "account": account_id})
+            return {"locked_accounts": locks_schema.dump(locked_accounts)}
+        elif action == "unlock":
+            locked_accounts = []
+            for account_id in accounts:
+                deleted_lock = Lock.query.filter_by(locked_account=account_id.get('account_id'))
+                deleted_lock.delete()
+                db.session.commit()
+                locked_accounts.append(new_lock)
+            return {"unlocked_accounts": locks_schema.dump(locked_accounts)}
+        else:
+            return {"error": "action missing or unknown"}
+
+    def delete_account(self):
+        accounts = request.json.get('accounts', None)
+        if not accounts or type(accounts) != list:
+            return {"error": "account ids were not supplied or key malformed"}
+        deleted_accounts = []
+        for account_id in accounts:
+            deleted_account = Account.query.filter_by(id=account_id.get('id'))
+            deleted_account.delete()
+            db.session.commit()
+            deleted_accounts.append(deleted_account)
+        return {"deleted_accounts": accounts_schema.dump(deleted_accounts)}
 
 
 class Account_ops(Resource):
@@ -69,14 +116,14 @@ class Account_ops(Resource):
                     )
                 db.session.add(new_lock)
                 db.session.commit()
-                return account_schema.dump(new_lock)
+                return lock_schema.dump(new_lock)
             else:
-                return {"error": "Neither proxy id nor account id were provided"}
+                return {"error": "No expiry provided"}, 400, {'content-type': 'application/json'}
         elif action == "unlock":
             deleted_lock = Lock.query.filter_by(locked_account=account_id)
             deleted_lock.delete()
             db.session.commit()
-            return account_schema.dump(deleted_lock)
+            return lock_schema.dump(deleted_lock)
 
     def delete_account(account_id):
         deleted_account = Account.query.filter_by(id=account_id)
@@ -102,11 +149,57 @@ class Proxy_maker(Resource):
         return account_schema.dump(new_proxy)
 
 
-class All_proxies(Resource):
+class Multiple_proxy_ops(Resource):
 
     def get(self):
-        proxies = Proxy.query.all()
-        return proxies_schema.dump(proxies)
+        filter_type = request.args.get('filter', None)
+        if not filter_type:
+            proxies = Proxy.query.all()
+            return proxies_schema.dump(proxies)
+
+    def patch(self):
+        proxies = request.json.get('proxies', None)
+        if not proxies or type(proxies) != list:
+            return {"error": "proxy ids were not supplied or key malformed"}
+        action = request.args.get('action')
+        if action == "lock":
+            locked_proxies = []
+            for proxy_id in proxies:
+                if proxy_id.get("expires_at", None):
+                    new_lock = Lock(
+                            locked_proxy=proxy_id.get('proxy_id'),
+                            locked_at=datetime.now(),
+                            expires_at=proxy_id.get('expires_at')
+                        )
+                    db.session.add(new_lock)
+                    db.session.commit()
+                    locked_proxies.append(new_lock)
+                else:
+                    print({"error": "No expiry provided",
+                           "proxy": proxy_id})
+            return {"locked_proxies": locks_schema.dump(locked_proxies)}
+        elif action == "unlock":
+            locked_proxies = []
+            for proxy_id in proxies:
+                deleted_lock = Lock.query.filter_by(locked_proxy=proxy_id.get('proxy_id'))
+                deleted_lock.delete()
+                db.session.commit()
+                locked_proxies.append(new_lock)
+            return {"unlocked_proxies": locks_schema.dump(locked_proxies)}
+        else:
+            return {"error": "action missing or unknown"}, 400, {'content-type': 'application/json'}
+
+    def delete_account(self):
+        proxies = request.json.get('accounts', None)
+        if not proxies or type(proxies) != list:
+            return {"error": "proxy ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
+        deleted_proxies = []
+        for proxy_id in proxies:
+            deleted_proxy = Proxy.query.filter_by(id=proxy_id.get('id'))
+            deleted_proxy.delete()
+            db.session.commit()
+            deleted_proxies.append(deleted_proxy)
+        return {"deleted_proxies": accounts_schema.dump(deleted_proxies)}
 
 
 class Proxy_ops(Resource):
@@ -139,26 +232,61 @@ class Proxy_ops(Resource):
                     )
                 db.session.add(new_lock)
                 db.session.commit()
-                return account_schema.dump(new_lock)
+                return lock_schema.dump(new_lock)
             else:
-                return {"error": "Neither proxy id nor account id were provided"}
+                return {"error": "No expiry provided"}
         elif action == "unlock":
             deleted_lock = Lock.query.filter_by(locked_proxy=proxy_id)
             deleted_lock.delete()
             db.session.commit()
-            return account_schema.dump(deleted_lock)
+            return lock_schema.dump(deleted_lock)
 
     def delete_account(proxy_id):
-        deleted_account = Proxy.query.filter_by(id=proxy_id)
-        deleted_account.delete()
+        deleted_proxy = Proxy.query.filter_by(id=proxy_id)
+        deleted_proxy.delete()
         db.session.commit()
-        return account_schema.dump(deleted_account)
+        return proxy_schema.dump(deleted_proxy)
+
+
+class Multiple_resource_ops(Resource):
+
+    def get(self):
+        filter_type = request.args.get('filter', None)
+        if not filter_type:
+            resources = Net_Resource.query.all()
+            return resources_schema.dump(resources)
+
+
+class Resource_maker(Resource):
+
+    def post(self):
+        non_nullable = [col.name for col in Net_Resource.__table__.columns if not col.nullable]
+        additional = [col.name for col in Net_Resource.__table__.columns if col.nullable]
+        print(non_nullable, additional)
+        resource_name = request.json.get('name', None)
+        resource_abbrev = request.json.get('abbreviation', None)
+        resource_type = request.json.get('resource_type', None)
+        if resource_name and resource_abbrev and resource_type:
+            try:
+                new_resource = Net_Resource(
+                    name=request.json.get('name'),
+                    abbreviation=request.json.get('abbreviation'),
+                    resource_type=request.json.get('resource_type')
+                )
+                db.session.add(new_resource)
+                db.session.commit()
+                return resource_schema.dump(new_resource)
+            except sql_exceptions.IntegrityError:
+                return {"error": "this resource is already registered"}, 400, {'content-type': 'application/json'}
+        else:
+            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
 
 
 class Resorce_ops(Resource):
 
     def get(self, resource_id):
-        return {'resource_data': 'fields'}
+        resource = Net_Resource.query.filter_by(id=resource_id).first()
+        return resource_schema.dump(resource)
 
     def post(self, resource_id):
         return {'added_data': 'fields'}
@@ -170,12 +298,7 @@ class Resorce_ops(Resource):
         return {'deleted_data': 'fields'}
 
 
-class Lock_ops(Resource):
-
-    def get(self, lock_id):
-        account = Lock.query.filter_by(id=lock_id).first()
-        if account:
-            return lock_schema.dump(account)
+class Interlock(Resource):
 
     def post(self, lock_id):
         if request.json.get("expires_at", None):
@@ -188,11 +311,19 @@ class Lock_ops(Resource):
                     )
                 db.session.add(new_lock)
                 db.session.commit()
-                return account_schema.dump(new_lock)
+                return lock_schema.dump(new_lock)
             else:
                 return {"error": "Neither proxy id nor account id were provided"}
         else:
             return {"error": "Expiry datetime was not provided"}
+
+
+class Lock_ops(Resource):
+
+    def get(self, lock_id):
+        account = Lock.query.filter_by(id=lock_id).first()
+        if account:
+            return lock_schema.dump(account)
 
     def put(self, lock_id):
         return {'changed_data': 'fields'}
