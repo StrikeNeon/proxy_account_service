@@ -19,18 +19,24 @@ class Init_page(Resource):
 class Account_maker(Resource):
 
     def post(self):
-        new_account = Account(
-            login=request.json.get('login'),
-            password=request.json.get('password'),
-            resource=request.json.get('resource'),
-            api_key=request.json.get('api_key'),
-            email=request.json.get('email'),
-            phone=request.json.get('phone'),
-            name=request.json.get('name'),
-        )
-        db.session.add(new_account)
-        db.session.commit()
-        return account_schema.dump(new_account)
+        account_login = request.json.get('login', None)
+        account_password = request.json.get('password', None)
+        resource = request.json.get('resource', None)
+        if account_login and account_password and resource:
+            new_account = Account(
+                login=account_login,
+                password=account_password,
+                resource=resource,
+                api_key=request.json.get('api_key'),
+                email=request.json.get('email'),
+                phone=request.json.get('phone'),
+                name=request.json.get('name'),
+            )
+            db.session.add(new_account)
+            db.session.commit()
+            return account_schema.dump(new_account)
+        else:
+            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
 
 
 class Multiple_account_ops(Resource):
@@ -135,18 +141,30 @@ class Account_ops(Resource):
 class Proxy_maker(Resource):
 
     def post(self):
-        new_proxy = Proxy(
-            ip_address=request.json.get('ip_address'),
-            port=request.json.get('port'),
-            username=request.json.get('username'),
-            password=request.json.get('password'),
-            ip_version=request.json.get('ip_version'),
-            expires_at=request.json.get('expires_at'),
-            valid_resources=request.json.get('valid_resources'),
-        )
-        db.session.add(new_proxy)
-        db.session.commit()
-        return account_schema.dump(new_proxy)
+        ip_address = request.json.get('ip_address', None)
+        port = request.json.get('port', None)
+        username = request.json.get('username', None)
+        password = request.json.get('password', None)
+        ip_version = request.json.get('ip_version', None)
+        renewed_at = request.json.get('renewed_at', None)
+        expires_at = request.json.get('expires_at', None)
+        valid_resources = request.json.get('valid_resources', None)
+        if ip_address and port and username and password and ip_version and renewed_at and expires_at and valid_resources:
+            new_proxy = Proxy(
+                ip_address=ip_address,
+                port=port,
+                username=username,
+                password=password,
+                ip_version=ip_version,
+                renewed_at=renewed_at,
+                expires_at=expires_at,
+                valid_resources=valid_resources,
+            )
+            db.session.add(new_proxy)
+            db.session.commit()
+            return proxy_schema.dump(new_proxy)
+        else:
+            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
 
 
 class Multiple_proxy_ops(Resource):
@@ -260,18 +278,18 @@ class Multiple_resource_ops(Resource):
 class Resource_maker(Resource):
 
     def post(self):
-        non_nullable = [col.name for col in Net_Resource.__table__.columns if not col.nullable]
-        additional = [col.name for col in Net_Resource.__table__.columns if col.nullable]
-        print(non_nullable, additional)
+        # non_nullable = [col.name for col in Net_Resource.__table__.columns if not col.nullable]
+        # additional = [col.name for col in Net_Resource.__table__.columns if col.nullable]
+        # print(non_nullable, additional)
         resource_name = request.json.get('name', None)
         resource_abbrev = request.json.get('abbreviation', None)
         resource_type = request.json.get('resource_type', None)
         if resource_name and resource_abbrev and resource_type:
             try:
                 new_resource = Net_Resource(
-                    name=request.json.get('name'),
-                    abbreviation=request.json.get('abbreviation'),
-                    resource_type=request.json.get('resource_type')
+                    name=resource_name,
+                    abbreviation=resource_abbrev,
+                    resource_type=resource_type
                 )
                 db.session.add(new_resource)
                 db.session.commit()
@@ -287,9 +305,6 @@ class Resorce_ops(Resource):
     def get(self, resource_id):
         resource = Net_Resource.query.filter_by(id=resource_id).first()
         return resource_schema.dump(resource)
-
-    def post(self, resource_id):
-        return {'added_data': 'fields'}
 
     def put(self, resource_id):
         return {'changed_data': 'fields'}
