@@ -146,8 +146,8 @@ class Proxy_maker(Resource):
         username = request.json.get('username', None)
         password = request.json.get('password', None)
         ip_version = request.json.get('ip_version', None)
-        renewed_at = request.json.get('renewed_at', None)
-        expires_at = request.json.get('expires_at', None)
+        renewed_at = datetime.fromtimestamp(request.json.get('renewed_at', None))
+        expires_at = datetime.fromtimestamp(request.json.get('expires_at', None))
         valid_resources = request.json.get('valid_resources', None)
         if ip_address and port and username and password and ip_version and renewed_at and expires_at and valid_resources:
             new_proxy = Proxy(
