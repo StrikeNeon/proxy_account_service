@@ -23,6 +23,14 @@ class PAS_client():
         else:
             print(responce.status_code)
 
+    def update_account_by_id(self, account_id, account_dict):
+        headers = {"content-type": "application/json"}
+        responce = requests.put(f"http://{self.address}:{self.port}/api/account/{account_id}", headers=headers, data=json.dumps(account_dict))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
     def add_account(self, account_dict):
         headers = {"content-type": "application/json"}
         responce = requests.post(f"http://{self.address}:{self.port}/api/add_account",headers=headers, data=json.dumps(account_dict))
@@ -111,6 +119,11 @@ if __name__ == "__main__":
     #                            "email": None, "phone": None,
     #                            "name": "fake name"})
     # print(new_account)
+
+    # edited_account = pas.update_account_by_id(1, {"resource": 1, "api_key": "test_key",
+    #                                               "email": "test_main", "phone": "test_phone"})
+    # account = pas.get_account_by_id(1)
+    # print(account)
 
     # new_proxy = pas.add_proxy({"ip_address": "127.0.0.1",
     #                          "port": 5885,

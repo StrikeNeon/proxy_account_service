@@ -99,16 +99,11 @@ class Account_ops(Resource):
         return account_schema.dump(account)
 
     def put(self, account_id):
+        table_columns = [col.name for col in Account.__table__.columns]  # get model column names
+        update_dict = {key: value for key, value
+                       in request.json.items() if key in table_columns}  # parse request json to only get necessary data
         queried_account = Account.query.filter_by(id=account_id)
-        queried_account.update({
-                "login": request.json.get('login'),
-                "password": request.json.get('password'),
-                "resource": request.json.get('resource'),
-                "api_key": request.json.get('api_key'),
-                "email": request.json.get('email'),
-                "phone": request.json.get('phone'),
-                "name": request.json.get('name'),
-            })
+        queried_account.update(update_dict)
         db.session.commit()
 
     def patch(self, account_id):
@@ -278,6 +273,7 @@ class Multiple_resource_ops(Resource):
 class Resource_maker(Resource):
 
     def post(self):
+        # TODO this could be used for a unified approach, also to avoid assinging nulls in put reqests
         # non_nullable = [col.name for col in Net_Resource.__table__.columns if not col.nullable]
         # additional = [col.name for col in Net_Resource.__table__.columns if col.nullable]
         # print(non_nullable, additional)
