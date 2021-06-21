@@ -105,6 +105,7 @@ class Account_ops(Resource):
         queried_account = Account.query.filter_by(id=account_id)
         queried_account.update(update_dict)
         db.session.commit()
+        return account_schema.dump(queried_account)
 
     def patch(self, account_id):
         action = request.args.get('action')
@@ -222,17 +223,13 @@ class Proxy_ops(Resource):
         return proxy_schema.dump(proxy)
 
     def put(self, proxy_id):
+        table_columns = [col.name for col in Proxy.__table__.columns]
+        update_dict = {key: value for key, value
+                       in request.json.items() if key in table_columns}
         queried_proxy = Proxy.query.filter_by(id=proxy_id)
-        queried_proxy.update({
-                "login": request.json.get('login'),
-                "password": request.json.get('password'),
-                "resource": request.json.get('resource'),
-                "api_key": request.json.get('api_key'),
-                "email": request.json.get('email'),
-                "phone": request.json.get('phone'),
-                "name": request.json.get('name'),
-            })
+        queried_proxy.update(update_dict)
         db.session.commit()
+        return proxy_schema.dump(queried_proxy)
 
     def patch(self, proxy_id):
         action = request.args.get('action')
@@ -303,10 +300,19 @@ class Resorce_ops(Resource):
         return resource_schema.dump(resource)
 
     def put(self, resource_id):
-        return {'changed_data': 'fields'}
+        table_columns = [col.name for col in Net_Resource.__table__.columns]
+        update_dict = {key: value for key, value
+                       in request.json.items() if key in table_columns}
+        queried_resource = Net_Resource.query.filter_by(id=resource_id)
+        queried_resource.update(update_dict)
+        db.session.commit()
+        return resource_schema.dump(new_resource)
 
     def delete(self, resource_id):
-        return {'deleted_data': 'fields'}
+        deleted_resource = Net_Resource.query.filter_by(id=resource_id)
+        deleted_resource.delete()
+        db.session.commit()
+        return resource_schema.dump(deleted_resource)
 
 
 class Interlock(Resource):
@@ -337,8 +343,16 @@ class Lock_ops(Resource):
             return lock_schema.dump(account)
 
     def put(self, lock_id):
-        return {'changed_data': 'fields'}
+        table_columns = [col.name for col in Lock.__table__.columns]
+        update_dict = {key: value for key, value
+                       in request.json.items() if key in table_columns}
+        queried_lock = Lock.query.filter_by(id=lock_id)
+        queried_lock.update(update_dict)
+        db.session.commit()
+        return lock_schema.dump(queried_lock)
 
     def delete(self, lock_id):
-        return {'unlocked_proxy': 'fields',
-                'unlocked_account': 'fields'}
+        deleted_lock = Lock.query.filter_by(id=lock_id)
+        deleted_lock.delete()
+        db.session.commit()
+        return lock_schema.dump(deleted_lock)
