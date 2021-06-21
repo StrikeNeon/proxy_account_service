@@ -10,6 +10,36 @@ from .schema import (account_schema, accounts_schema,
 from .models import Account, Lock, Proxy, Net_Resource
 
 
+class GP_maker():
+    # this only works on something easy to parse
+    def __init__(self, model, schema, request_json):
+        self.model = model
+        self.schema = schema
+        self.json_data = request_json
+
+    def make_record(self):
+        # this isn't the best way here, can't think of anything else
+        non_nullable = [col.name for col in self.model.__table__.columns if not col.nullable]
+        if len(non_nullable) == len([key for key in self.json_data.keys() if key in non_nullable]):
+            additional = [col.name for col in self.model.__table__.columns if col.nullable]
+            record_dict = {key: value for key, value
+                           in self.json_data.items()
+                           if key in non_nullable or additional}
+            if record_dict.get("renewed_at", None):
+                record_dict["renewed_at"] = datetime.fromtimestamp(self.json_data.get('renewed_at'))
+            if record_dict.get("expires_at", None):
+                record_dict["expires_at"] = datetime.fromtimestamp(self.json_data.get('expires_at'))
+            try:
+                new_record = self.model(**record_dict)
+                db.session.add(new_record)
+                db.session.commit()
+                return self.schema.dump(new_record)
+            except sql_exceptions.IntegrityError:
+                return {"error": "this record is already registered"}, 400, {'content-type': 'application/json'}
+        else:
+            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
+
+
 class Init_page(Resource):
 
     def get(self):
@@ -19,24 +49,9 @@ class Init_page(Resource):
 class Account_maker(Resource):
 
     def post(self):
-        account_login = request.json.get('login', None)
-        account_password = request.json.get('password', None)
-        resource = request.json.get('resource', None)
-        if account_login and account_password and resource:
-            new_account = Account(
-                login=account_login,
-                password=account_password,
-                resource=resource,
-                api_key=request.json.get('api_key'),
-                email=request.json.get('email'),
-                phone=request.json.get('phone'),
-                name=request.json.get('name'),
-            )
-            db.session.add(new_account)
-            db.session.commit()
-            return account_schema.dump(new_account)
-        else:
-            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
+        maker = GP_maker(Account, account_schema, request_json)
+        new_account = maker.make_record()
+        return new_account
 
 
 class Multiple_account_ops(Resource):
@@ -59,7 +74,7 @@ class Multiple_account_ops(Resource):
                     new_lock = Lock(
                             locked_account=account_id.get('account_id'),
                             locked_at=datetime.now(),
-                            expires_at=account_id.get('expires_at')
+                            expires_at=datetime.fromtimestamp(account_id.get('expires_at'))
                         )
                     db.session.add(new_lock)
                     db.session.commit()
@@ -114,7 +129,7 @@ class Account_ops(Resource):
                 new_lock = Lock(
                         locked_account=request.json.get('account_id'),
                         locked_at=datetime.now(),
-                        expires_at=request.json.get('expires_at')
+                        expires_at=datetime.fromtimestamp(request.json.get('expires_at'))
                     )
                 db.session.add(new_lock)
                 db.session.commit()
@@ -137,30 +152,9 @@ class Account_ops(Resource):
 class Proxy_maker(Resource):
 
     def post(self):
-        ip_address = request.json.get('ip_address', None)
-        port = request.json.get('port', None)
-        username = request.json.get('username', None)
-        password = request.json.get('password', None)
-        ip_version = request.json.get('ip_version', None)
-        renewed_at = datetime.fromtimestamp(request.json.get('renewed_at', None))
-        expires_at = datetime.fromtimestamp(request.json.get('expires_at', None))
-        valid_resources = request.json.get('valid_resources', None)
-        if ip_address and port and username and password and ip_version and renewed_at and expires_at and valid_resources:
-            new_proxy = Proxy(
-                ip_address=ip_address,
-                port=port,
-                username=username,
-                password=password,
-                ip_version=ip_version,
-                renewed_at=renewed_at,
-                expires_at=expires_at,
-                valid_resources=valid_resources,
-            )
-            db.session.add(new_proxy)
-            db.session.commit()
-            return proxy_schema.dump(new_proxy)
-        else:
-            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
+        maker = GP_maker(Proxy, proxy_schema, request.json)
+        new_proxy = maker.make_record()
+        return new_proxy
 
 
 class Multiple_proxy_ops(Resource):
@@ -183,7 +177,7 @@ class Multiple_proxy_ops(Resource):
                     new_lock = Lock(
                             locked_proxy=proxy_id.get('proxy_id'),
                             locked_at=datetime.now(),
-                            expires_at=proxy_id.get('expires_at')
+                            expires_at=datetime.fromtimestamp(proxy_id.get('expires_at'))
                         )
                     db.session.add(new_lock)
                     db.session.commit()
@@ -238,7 +232,7 @@ class Proxy_ops(Resource):
                 new_lock = Lock(
                         locked_proxy=proxy_id,
                         locked_at=datetime.now(),
-                        expires_at=request.json.get('expires_at')
+                        expires_at=datetime.fromtimestamp(request.json.get('expires_at'))
                     )
                 db.session.add(new_lock)
                 db.session.commit()
@@ -270,27 +264,9 @@ class Multiple_resource_ops(Resource):
 class Resource_maker(Resource):
 
     def post(self):
-        # TODO this could be used for a unified approach, also to avoid assinging nulls in put reqests
-        # non_nullable = [col.name for col in Net_Resource.__table__.columns if not col.nullable]
-        # additional = [col.name for col in Net_Resource.__table__.columns if col.nullable]
-        # print(non_nullable, additional)
-        resource_name = request.json.get('name', None)
-        resource_abbrev = request.json.get('abbreviation', None)
-        resource_type = request.json.get('resource_type', None)
-        if resource_name and resource_abbrev and resource_type:
-            try:
-                new_resource = Net_Resource(
-                    name=resource_name,
-                    abbreviation=resource_abbrev,
-                    resource_type=resource_type
-                )
-                db.session.add(new_resource)
-                db.session.commit()
-                return resource_schema.dump(new_resource)
-            except sql_exceptions.IntegrityError:
-                return {"error": "this resource is already registered"}, 400, {'content-type': 'application/json'}
-        else:
-            return {"error": "one or more non nullable fields was not supplied"}, 400, {'content-type': 'application/json'}
+        maker = GP_maker(Net_Resource, resource_schema, request.json)
+        new_resource = maker.make_record()
+        return new_resource
 
 
 class Resorce_ops(Resource):
@@ -306,7 +282,7 @@ class Resorce_ops(Resource):
         queried_resource = Net_Resource.query.filter_by(id=resource_id)
         queried_resource.update(update_dict)
         db.session.commit()
-        return resource_schema.dump(new_resource)
+        return resource_schema.dump(queried_resource)
 
     def delete(self, resource_id):
         deleted_resource = Net_Resource.query.filter_by(id=resource_id)
@@ -318,21 +294,11 @@ class Resorce_ops(Resource):
 class Interlock(Resource):
 
     def post(self, lock_id):
-        if request.json.get("expires_at", None):
-            if request.json.get("locked_account") or request.json.get("locked_proxy"):
-                new_lock = Lock(
-                        locked_account=request.json.get('account_id', None),
-                        locked_proxy=request.json.get('proxy_id', None),
-                        locked_at=datetime.now(),
-                        expires_at=request.json['expires_at']
-                    )
-                db.session.add(new_lock)
-                db.session.commit()
-                return lock_schema.dump(new_lock)
-            else:
-                return {"error": "Neither proxy id nor account id were provided"}
-        else:
-            return {"error": "Expiry datetime was not provided"}
+        json_data = request.json
+        json_data["locked_at"] = datetime.now()
+        maker = GP_maker(Lock, lock_schema, request.json)
+        new_lock = maker.make_record()
+        return new_lock
 
 
 class Lock_ops(Resource):
