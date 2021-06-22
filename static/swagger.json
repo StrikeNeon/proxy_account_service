@@ -51,6 +51,36 @@
                     }
                 }
             },
+            "delete": {
+                "tags": [
+                    "Account operations"
+                ],
+                "summary": "delete accounts",
+                "parameters": [
+                    {
+                        "name": "accounts",
+                        "in": "query",
+                        "required": true,
+                        "description": "ID list of accounts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountIDList"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            }
         },
         "/api/account/{id}": {
             "parameters": [
@@ -86,7 +116,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AccountsPutSchema"
+                                "$ref": "#/components/schemas/AccountResponseSchema"
                             }
                         }
                     }
@@ -179,6 +209,36 @@
                     }
                 }
             },
+            "delete": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "proxies",
+                        "in": "query",
+                        "required": true,
+                        "description": "ID list of proxies",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProxyIDList"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            }
         },
         "/api/proxy/{id}": {
             "parameters": [
@@ -214,7 +274,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AccountsPutSchema"
+                                "$ref": "#/components/schemas/ProxyResponseSchema"
                             }
                         }
                     }
@@ -295,6 +355,28 @@
     },
     "components": {
         "schemas": {
+            "AccountIDList": {
+                "type": "object",
+                "properties": {
+                    "accounts": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "ProxyIDList": {
+                "type": "object",
+                "properties": {
+                    "proxies": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
             "ErrorResponse": {
                 "type": "object",
                 "properties": {
@@ -305,39 +387,6 @@
                 }
             },
             "AccountPostSchema": {
-                "type": "object",
-                "properties": {
-                    "login": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "password": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "resource": {
-                        "type": "number",
-                        "format": "number"
-                    },
-                    "api_key": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "phone": {
-                        "type": "string",
-                        "format": "string"
-                    },
-                    "name": {
-                        "type": "string",
-                        "format": "string"
-                    }
-                }
-            },
-            "AccountsPutSchema": {
                 "type": "object",
                 "properties": {
                     "login": {

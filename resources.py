@@ -148,12 +148,13 @@ class Multiple_account_ops(Resource):
             return {"error": "action missing or unknown"}
 
     def delete(self):
-        accounts = request.json.get('accounts', None)
+        accounts = request.args.get('accounts', None)
+        accounts = accounts.split(",")
         if not accounts or type(accounts) != list:
             return {"error": "account ids were not supplied or key malformed"}
         deleted_accounts = []
         for account_id in accounts:
-            deleted_account = Account.query.filter_by(id=account_id.get('id'))
+            deleted_account = Account.query.filter_by(id=account_id)
             deleted_account.delete()
             db.session.commit()
             deleted_accounts.append(deleted_account)
@@ -178,7 +179,7 @@ class Account_ops(Resource):
             new_lock = locker.make_lock(account_id)
         return new_lock
 
-    def delete(account_id):
+    def delete(self, account_id):
         deleted_account = Account.query.filter_by(id=account_id)
         deleted_account.delete()
         db.session.commit()
@@ -226,12 +227,13 @@ class Multiple_proxy_ops(Resource):
             return {"error": "action missing or unknown"}
 
     def delete(self):
-        proxies = request.json.get('accounts', None)
+        proxies = request.args.get('proxies', None)
+        proxies = proxies.split(",")
         if not proxies or type(proxies) != list:
             return {"error": "proxy ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
         deleted_proxies = []
         for proxy_id in proxies:
-            deleted_proxy = Proxy.query.filter_by(id=proxy_id.get('id'))
+            deleted_proxy = Proxy.query.filter_by(id=proxy_id)
             deleted_proxy.delete()
             db.session.commit()
             deleted_proxies.append(deleted_proxy)
@@ -254,7 +256,7 @@ class Proxy_ops(Resource):
         new_lock = locker.make_lock(proxy_id, request.args)
         return new_lock
 
-    def delete(proxy_id):
+    def delete(self, proxy_id):
         deleted_proxy = Proxy.query.filter_by(id=proxy_id)
         deleted_proxy.delete()
         db.session.commit()
@@ -268,6 +270,19 @@ class Multiple_resource_ops(Resource):
         if not filter_type:
             resources = Net_Resource.query.all()
             return resources_schema.dump(resources)
+
+    def delete(self):
+        resources = request.args.get('resources', None)
+        resources = resources.split(",")
+        if not resources or type(resources) != list:
+            return {"error": "proxy ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
+        deleted_resources = []
+        for resource_id in resources:
+            deleted_resource = Net_Resource.query.filter_by(id=resource_id)
+            deleted_resource.delete()
+            db.session.commit()
+            deleted_resources.append(deleted_resource)
+        return {"deleted_proxies": resources_schema.dump(deleted_resources)}
 
 
 class Resource_maker(Resource):
@@ -298,7 +313,7 @@ class Resorce_ops(Resource):
 
 class Interlock(Resource):
 
-    def post(self, lock_id):
+    def post(self):
         json_data = request.json
         json_data["locked_at"] = datetime.now()
         maker = general_request_processor(Lock, lock_schema, request.json)
