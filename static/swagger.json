@@ -1,0 +1,553 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "REST app for account and proxy management",
+        "version": "1.0.0",
+        "title": "Proxy Account Service",
+        "contact": {
+            "email": "sjasfacemd@gmail.com"
+        },
+        "license": {
+            "name": "Use as you like lmao",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Account operations",
+            "description": "endpoints for account CRUD"
+        },
+        {
+            "name": "Proxy operations",
+            "description": "endpoints for proxy CRUD"
+        },
+        {
+            "name": "Resource operations",
+            "description": "endpoints for resource CRUD"
+        },
+        {
+            "name": "Lock operations",
+            "description": "endpoints for interlocking and lock CRUD"
+        }
+    ],
+    "paths": {
+        "/api/accounts": {
+            "get": {
+                "tags": [
+                    "Account operations"
+                ],
+                "summary": "query all accounts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            },
+        },
+        "/api/account/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of the account",
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Account operations"
+                ],
+                "summary": "query account by id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Account operations"
+                ],
+                "requestBody": {
+                    "description": "Account Update Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountsPutSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update account",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Account operations"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete account",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add_account": {
+            "post": {
+                "tags": [
+                    "Account operations"
+                ],
+                "summary": "Create a new account",
+                "requestBody": {
+                    "description": "Account Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountPostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    },
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data.",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/proxies": {
+            "get": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "summary": "query all proxies",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+        },
+        "/api/proxy/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of the proxy",
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "summary": "query proxy by id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "requestBody": {
+                    "description": "Proxy Update Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountsPutSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "delete proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add_proxy": {
+            "post": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "summary": "Create a new proxy",
+                "requestBody": {
+                    "description": "Proxy Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProxyPostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    },
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data.",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+    },
+    "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "AccountPostSchema": {
+                "type": "object",
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "api_key": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "AccountsPutSchema": {
+                "type": "object",
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "api_key": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "AccountResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "login": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "api_key": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "ProxyPostSchema": {
+                "type": "object",
+                "properties": {
+                    "ip_address": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "port": {
+                        "type": "number",
+                        "format": "string"
+                    },
+                    "username": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "ip_version": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "renewed_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "valid_resources": {
+                        "type": "string",
+                        "format": "json"
+                    }
+                }
+            },
+            "ProxyResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "ip_address": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "port": {
+                        "type": "number",
+                        "format": "string"
+                    },
+                    "username": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "ip_version": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "renewed_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "valid_resources": {
+                        "type": "string",
+                        "format": "json"
+                    }
+                }
+            },
+            "ResourcePostSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "abbreviation": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "ResourceResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "abbreviation": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "LockSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "locked_account": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "locked_proxy": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "locked_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
+                    }
+                }
+            }
+        }
+    }
+}
