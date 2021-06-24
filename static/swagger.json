@@ -41,7 +41,7 @@
                 "tags": [
                     "Account operations"
                 ],
-                "summary": "query all accounts",
+                "summary": "Query all accounts",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -55,11 +55,11 @@
                 "tags": [
                     "Account operations"
                 ],
-                "summary": "delete accounts",
+                "summary": "Delete accounts",
                 "parameters": [
                     {
                         "name": "accounts",
-                        "in": "query",
+                        "in": "Query",
                         "required": true,
                         "description": "ID list of accounts",
                         "type": "array",
@@ -96,7 +96,7 @@
                 "tags": [
                     "Account operations"
                 ],
-                "summary": "query account by id",
+                "summary": "Query account by id",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -124,7 +124,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "update account",
+                "summary": "Update account",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -141,7 +141,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "delete account",
+                "summary": "Delete account",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -199,7 +199,7 @@
                 "tags": [
                     "Proxy operations"
                 ],
-                "summary": "query all proxies",
+                "summary": "Query all proxies",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -216,7 +216,7 @@
                 "parameters": [
                     {
                         "name": "proxies",
-                        "in": "query",
+                        "in": "Query",
                         "required": true,
                         "description": "ID list of proxies",
                         "type": "array",
@@ -228,7 +228,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "delete proxy",
+                "summary": "Delete proxy",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -254,7 +254,7 @@
                 "tags": [
                     "Proxy operations"
                 ],
-                "summary": "query proxy by id",
+                "summary": "Query proxy by id",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -282,7 +282,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "update proxy",
+                "summary": "Update proxy",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -299,7 +299,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "delete proxy",
+                "summary": "Delete proxy",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -352,6 +352,251 @@
                 }
             }
         },
+        "/api/add_resource": {
+            "post": {
+                "tags": [
+                    "Resource operations"
+                ],
+                "summary": "Create a new resource",
+                "requestBody": {
+                    "description": "Resource Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResourcePostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ResourceResponseSchema"
+                        }
+                    },
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data.",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/resources": {
+            "get": {
+                "tags": [
+                    "Resource operations"
+                ],
+                "summary": "Query all resources",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ResourceResponseSchema"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Resource operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "resources",
+                        "in": "Query",
+                        "required": true,
+                        "description": "ID list of resources",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ResourceIDList"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete resources",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ResourceResponseSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/resource/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of the resource",
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Resource operations"
+                ],
+                "summary": "Query resource by id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ResourceResponseSchema"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Resource operations"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete resource",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ResourceResponseSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/interlock": {
+            "post": {
+                "tags": [
+                    "Lock operations"
+                ],
+                "summary": "Lock account to proxy",
+                "requestBody": {
+                    "description": "Lock Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockPostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
+                        }
+                    },
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data.",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/lock/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of the resource",
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Lock operations"
+                ],
+                "summary": "Query lock by id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Lock operations"
+                ],
+                "requestBody": {
+                    "description": "Lock Update Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockPostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Lock operations"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete lock",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
+                        }
+                    }
+                }
+            }
+        }
     },
     "components": {
         "schemas": {
@@ -370,6 +615,17 @@
                 "type": "object",
                 "properties": {
                     "proxies": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "ResourceIDList": {
+                "type": "object",
+                "properties": {
+                    "resources": {
                         "type": "array",
                         "items": {
                             "type": "number"
@@ -537,6 +793,23 @@
             "ResourcePostSchema": {
                 "type": "object",
                 "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "abbreviation": {
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            },
+            "ResourceResponseSchema": {
+                "type": "object",
+                "properties": {
                     "id": {
                         "type": "number",
                         "format": "number"
@@ -555,24 +828,28 @@
                     }
                 }
             },
-            "ResourceResponseSchema": {
+            "LockPostSchema": {
                 "type": "object",
                 "properties": {
-                    "name": {
-                        "type": "string",
-                        "format": "string"
+                    "locked_account": {
+                        "type": "number",
+                        "format": "number"
                     },
-                    "abbreviation": {
-                        "type": "string",
-                        "format": "string"
+                    "locked_proxy": {
+                        "type": "number",
+                        "format": "number"
                     },
-                    "resource_type": {
-                        "type": "string",
-                        "format": "string"
+                    "locked_at": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
                     }
                 }
             },
-            "LockSchema": {
+            "LockResponseSchema": {
                 "type": "object",
                 "properties": {
                     "id": {

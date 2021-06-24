@@ -126,7 +126,7 @@ class Multiple_account_ops(Resource):
     def patch(self):
         accounts = request.json.get('accounts', None)
         if not accounts or type(accounts) != list:
-            return {"error": "account ids were not supplied or key malformed"}
+            return {"error": "account ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
         action = request.args.get('action')
         if action == "lock":
             locked_accounts = []
@@ -145,13 +145,13 @@ class Multiple_account_ops(Resource):
                     unlocked_accounts.append(deleted_lock_lock)
             return {"unlocked_accounts": locks_schema.dump(unlocked_accounts)}
         else:
-            return {"error": "action missing or unknown"}
+            return {"error": "action missing or unknown"}, 400, {'content-type': 'application/json'}
 
     def delete(self):
         accounts = request.args.get('accounts', None)
         accounts = accounts.split(",")
         if not accounts or type(accounts) != list:
-            return {"error": "account ids were not supplied or key malformed"}
+            return {"error": "account ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
         deleted_accounts = []
         for account_id in accounts:
             deleted_account = Account.query.filter_by(id=account_id)
@@ -205,7 +205,7 @@ class Multiple_proxy_ops(Resource):
     def patch(self):
         proxies = request.json.get('proxies', None)
         if not proxies or type(proxies) != list:
-            return {"error": "account ids were not supplied or key malformed"}
+            return {"error": "account ids were not supplied or key malformed"}, 400, {'content-type': 'application/json'}
         action = request.args.get('action')
         if action == "lock":
             locked_proxies = []
@@ -224,7 +224,7 @@ class Multiple_proxy_ops(Resource):
                     unlocked_proxies.append(deleted_lock_lock)
             return {"unlocked_proxies": locks_schema.dump(unlocked_proxies)}
         else:
-            return {"error": "action missing or unknown"}
+            return {"error": "action missing or unknown"}, 400, {'content-type': 'application/json'}
 
     def delete(self):
         proxies = request.args.get('proxies', None)
@@ -298,11 +298,6 @@ class Resorce_ops(Resource):
     def get(self, resource_id):
         resource = Net_Resource.query.filter_by(id=resource_id).first()
         return resource_schema.dump(resource)
-
-    def put(self, resource_id):
-        updater = general_request_processor(Net_Resource, resource_schema, request.json)
-        updated_record = updater.update_record(resource_id)
-        return updated_record
 
     def delete(self, resource_id):
         deleted_resource = Net_Resource.query.filter_by(id=resource_id)
