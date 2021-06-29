@@ -1050,7 +1050,7 @@
                     }
                 }
             },
-            "LocksResponseResponse": {
+            "LocksResponseSchema": {
                 "type": "object",
                 "properties": {
                     "locks": {
