@@ -135,7 +135,7 @@ class Multiple_account_ops(Resource):
                 new_lock = maker.make_lock(account_id.get('account_id'), many=True)
                 if new_lock:
                     locked_accounts.append(new_lock)
-            return {"locked_accounts": locks_schema.dump(locked_accounts)}
+            return {"locks": locks_schema.dump(locked_accounts)}
         elif action == "unlock":
             unlocked_accounts = []
             for account_id in accounts:
@@ -143,7 +143,7 @@ class Multiple_account_ops(Resource):
                 deleted_lock_lock = maker.unmake_lock(account_id.get('account_id'), many=True)
                 if new_lock:
                     unlocked_accounts.append(deleted_lock_lock)
-            return {"unlocked_accounts": locks_schema.dump(unlocked_accounts)}
+            return {"locks": locks_schema.dump(unlocked_accounts)}
         else:
             return {"error": "action missing or unknown"}, 400, {'content-type': 'application/json'}
 
@@ -177,6 +177,8 @@ class Account_ops(Resource):
         action = request.args.get('action')
         if action == "lock":
             new_lock = locker.make_lock(account_id)
+        if action == "unlock":
+            new_lock = locker.unmake_lock(account_id)
         return new_lock
 
     def delete(self, account_id):
@@ -214,7 +216,7 @@ class Multiple_proxy_ops(Resource):
                 new_lock = maker.make_lock(proxy_id.get('proxy_id'), many=True)
                 if new_lock:
                     locked_proxies.append(new_lock)
-            return {"locked_proxies": locks_schema.dump(locked_proxies)}
+            return {"locks": locks_schema.dump(locked_proxies)}
         elif action == "unlock":
             unlocked_proxies = []
             for proxy_id in proxies:
@@ -222,7 +224,7 @@ class Multiple_proxy_ops(Resource):
                 deleted_lock_lock = maker.unmake_lock(proxy_id.get('proxy_id'), many=True)
                 if new_lock:
                     unlocked_proxies.append(deleted_lock_lock)
-            return {"unlocked_proxies": locks_schema.dump(unlocked_proxies)}
+            return {"locks": locks_schema.dump(unlocked_proxies)}
         else:
             return {"error": "action missing or unknown"}, 400, {'content-type': 'application/json'}
 

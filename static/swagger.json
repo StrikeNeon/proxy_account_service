@@ -80,6 +80,43 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "tags": [
+                    "Account operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "Query",
+                        "required": true,
+                        "description": "lock or unlock",
+                        "type": "string"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Lock\\unlock several accounts",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockAccountsPatchSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "locks made\\unmade",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LocksResponseSchema"
+                        }
+                    }
+                }
             }
         },
         "/api/account/{id}": {
@@ -130,6 +167,43 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Account operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "Query",
+                        "required": true,
+                        "description": "lock or unlock",
+                        "type": "string"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Account Locking Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockAccountPatchSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update account",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
                         }
                     }
                 }
@@ -205,6 +279,44 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "Query",
+                        "required": true,
+                        "description": "lock or unlock",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LocksResponseSchema"
+                        }
+                    }
+                },
+                "requestBody": {
+                    "description": "Lock many proxies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockProxiesPatchSchema"
+                            }
                         }
                     }
                 }
@@ -288,6 +400,44 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "Query",
+                        "required": true,
+                        "description": "lock or unlock",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete proxy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LockResponseSchema"
+                        }
+                    }
+                },
+                "requestBody": {
+                    "description": "Proxy Locking Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockProxyPatchSchema"
+                            }
                         }
                     }
                 }
@@ -871,6 +1021,107 @@
                     "expires_at": {
                         "type": "number",
                         "format": "number"
+                    }
+                }
+            },
+            "LockProxyPatchSchema": {
+                "type": "object",
+                "properties": {
+                    "proxy_id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
+                    }
+                }
+            },
+            "LockAccountPatchSchema": {
+                "type": "object",
+                "properties": {
+                    "account_id": {
+                        "type": "number",
+                        "format": "number"
+                    },
+                    "expires_at": {
+                        "type": "number",
+                        "format": "number"
+                    }
+                }
+            },
+            "LocksResponseResponse": {
+                "type": "object",
+                "properties": {
+                    "locks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "locked_account": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "locked_proxy": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "locked_at": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "expires_at": {
+                                    "type": "number",
+                                    "format": "number"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "LockProxiesPatchSchema": {
+                "type": "object",
+                "properties": {
+                    "locks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "proxies_id": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "expires_at": {
+                                    "type": "number",
+                                    "format": "number"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "LockAccountsPatchSchema": {
+                "type": "object",
+                "properties": {
+                    "locks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "account_id": {
+                                    "type": "number",
+                                    "format": "number"
+                                },
+                                "expires_at": {
+                                    "type": "number",
+                                    "format": "number"
+                                }
+                            }
+                        }
                     }
                 }
             }
