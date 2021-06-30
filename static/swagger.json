@@ -59,7 +59,7 @@
                 "parameters": [
                     {
                         "name": "accounts",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "ID list of accounts",
                         "type": "array",
@@ -88,7 +88,7 @@
                 "parameters": [
                     {
                         "name": "action",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "lock or unlock",
                         "type": "string"
@@ -178,7 +178,7 @@
                 "parameters": [
                     {
                         "name": "action",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "lock or unlock",
                         "type": "string"
@@ -290,7 +290,7 @@
                 "parameters": [
                     {
                         "name": "action",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "lock or unlock",
                         "type": "string"
@@ -328,7 +328,7 @@
                 "parameters": [
                     {
                         "name": "proxies",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "ID list of proxies",
                         "type": "array",
@@ -411,7 +411,7 @@
                 "parameters": [
                     {
                         "name": "action",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "lock or unlock",
                         "type": "string"
@@ -569,7 +569,7 @@
                 "parameters": [
                     {
                         "name": "resources",
-                        "in": "Query",
+                        "in": "query",
                         "required": true,
                         "description": "ID list of resources",
                         "type": "array",
@@ -1027,10 +1027,6 @@
             "LockProxyPatchSchema": {
                 "type": "object",
                 "properties": {
-                    "proxy_id": {
-                        "type": "number",
-                        "format": "number"
-                    },
                     "expires_at": {
                         "type": "number",
                         "format": "number"
@@ -1040,10 +1036,6 @@
             "LockAccountPatchSchema": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
-                        "type": "number",
-                        "format": "number"
-                    },
                     "expires_at": {
                         "type": "number",
                         "format": "number"

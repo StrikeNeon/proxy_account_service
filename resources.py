@@ -52,12 +52,12 @@ class general_request_processor():
         if request.json.get("expires_at", None):
             if self.model == Account:
                 check_lock = Lock.query.filter_by(locked_account=requested_id)
-                if len(check_lock) > 0:
+                if check_lock.count() > 0:
                     if many:
                         return check_lock
                     return {"error": f"account {requested_id} already locked"}, 201, {'content-type': 'application/json'}
                 new_lock = Lock(
-                            locked_account=self.json_data.get(requested_id),
+                            locked_account=requested_id,
                             locked_at=datetime.now(),
                             expires_at=datetime.fromtimestamp(self.json_data.get('expires_at'))
                             )
@@ -68,11 +68,11 @@ class general_request_processor():
                 return lock_schema.dump(new_lock)
             else:
                 check_lock = Lock.query.filter_by(locked_proxy=requested_id)
-                if len(check_lock) > 0:
+                if check_lock.count() > 0:
                     if many:
                         return check_lock
                     return {"error": f"proxy {requested_id} already locked at {check_lock.id}"}, 201, {'content-type': 'application/json'}
-                new_lock = Lock(locked_proxy=self.json_data.get(requested_id),
+                new_lock = Lock(locked_proxy=requested_id,
                                 locked_at=datetime.now(),
                                 expires_at=datetime.fromtimestamp(self.json_data.get('expires_at'))
                                 )
@@ -175,6 +175,8 @@ class Account_ops(Resource):
     def patch(self, account_id):
         locker = general_request_processor(Account, account_schema, request.json)
         action = request.args.get('action')
+        if not action:
+            return {"error": "no action query"}, 400, {'content-type': 'application/json'}
         if action == "lock":
             new_lock = locker.make_lock(account_id)
         if action == "unlock":
