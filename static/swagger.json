@@ -36,6 +36,49 @@
         }
     ],
     "paths": {
+        ,
+        "/api/add_account": {
+            "post": {
+                "tags": [
+                    "Account operations"
+                ],
+                "summary": "Create a new account",
+                "requestBody": {
+                    "description": "Account Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountPostSchema"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountResponseSchema"
+                        }
+                    },
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data.",
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/accounts": {
             "get": {
                 "tags": [
@@ -85,6 +128,7 @@
                 "tags": [
                     "Account operations"
                 ],
+                "summary": "lock\\unlock accounts",
                 "parameters": [
                     {
                         "name": "action",
@@ -108,7 +152,6 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "locks made\\unmade",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -175,6 +218,7 @@
                 "tags": [
                     "Account operations"
                 ],
+                "summary": "lock\\unlock account by id",
                 "parameters": [
                     {
                         "name": "action",
@@ -198,7 +242,6 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update account",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -226,19 +269,19 @@
                 }
             }
         },
-        "/api/add_account": {
+        "/api/add_proxy": {
             "post": {
                 "tags": [
-                    "Account operations"
+                    "Proxy operations"
                 ],
-                "summary": "Create a new account",
+                "summary": "Create a new proxy",
                 "requestBody": {
-                    "description": "Account Post Object",
+                    "description": "Proxy Post Object",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AccountPostSchema"
+                                "$ref": "#/components/schemas/ProxyPostSchema"
                             }
                         }
                     }
@@ -250,7 +293,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/components/schemas/AccountResponseSchema"
+                            "$ref": "#/components/schemas/ProxyResponseSchema"
                         }
                     },
                     "201": {
@@ -283,44 +326,6 @@
                     }
                 }
             },
-            "patch": {
-                "tags": [
-                    "Proxy operations"
-                ],
-                "parameters": [
-                    {
-                        "name": "action",
-                        "in": "query",
-                        "required": true,
-                        "description": "lock or unlock",
-                        "type": "string"
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Delete proxy",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/LocksResponseSchema"
-                        }
-                    }
-                },
-                "requestBody": {
-                    "description": "Lock many proxies",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LockProxiesPatchSchema"
-                            }
-                        }
-                    }
-                }
-            },
             "delete": {
                 "tags": [
                     "Proxy operations"
@@ -340,13 +345,51 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Delete proxy",
+                "summary": "Delete several proxies",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ProxyResponseSchema"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Proxy operations"
+                ],
+                "summary": "lock\\unlock proxies",
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "required": true,
+                        "description": "lock or unlock",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LocksResponseSchema"
+                        }
+                    }
+                },
+                "requestBody": {
+                    "description": "Lock many proxies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LockProxiesPatchSchema"
+                            }
                         }
                     }
                 }
@@ -408,6 +451,7 @@
                 "tags": [
                     "Proxy operations"
                 ],
+                "summary": "lock\\unlock proxy by id",
                 "parameters": [
                     {
                         "name": "action",
@@ -420,7 +464,6 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Delete proxy",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -455,48 +498,6 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/components/schemas/ProxyResponseSchema"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/add_proxy": {
-            "post": {
-                "tags": [
-                    "Proxy operations"
-                ],
-                "summary": "Create a new proxy",
-                "requestBody": {
-                    "description": "Proxy Post Object",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ProxyPostSchema"
-                            }
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/components/schemas/ProxyResponseSchema"
-                        }
-                    },
-                    "201": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/components/schemas/ErrorResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Failed. Bad post data.",
-                        "schema": {
-                            "$ref": "#/components/schemas/ErrorResponse"
                         }
                     }
                 }
