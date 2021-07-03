@@ -9,19 +9,50 @@ class PAS_client():
         self.address = address
         self.port = port
 
+    def add_account(self, account_dict):
+        headers = {"content-type": "application/json"}
+        responce = requests.post(f"http://{self.address}:{self.port}/api/add_account",headers=headers, data=json.dumps(account_dict))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
     def get_all_accounts(self):
         responce = requests.get(f"http://{self.address}:{self.port}/api/accounts")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+    def delete_many_accounts(self, accounts_list):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/accounts/{accounts_list}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def lock_many_accounts(self, locks):
+        headers = {"content-type": "application/json"}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/accounts?action=lock", headers=headers, data=json.dumps(locks))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def unlock_many_accounts(self, locks):
+        headers = {"content-type": "application/json"}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/accounts?action=unlock", headers=headers, data=json.dumps(locks))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
     def get_account_by_id(self, account_id):
         responce = requests.get(f"http://{self.address}:{self.port}/api/account/{account_id}")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
     def update_account_by_id(self, account_id, account_dict):
         headers = {"content-type": "application/json"}
@@ -29,15 +60,14 @@ class PAS_client():
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
-    def add_account(self, account_dict):
-        headers = {"content-type": "application/json"}
-        responce = requests.post(f"http://{self.address}:{self.port}/api/add_account",headers=headers, data=json.dumps(account_dict))
+    def delete_account_by_id(self, account_id):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/proxy/{account_id}")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
     def lock_account_by_id(self, account_id, expiry_date):
         headers = {"content-type": "application/json"}
@@ -46,28 +76,79 @@ class PAS_client():
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
     def unlock_account_by_id(self, account_id):
         responce = requests.patch(f"http://{self.address}:{self.port}/api/account/{account_id}?action=unlock")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+
+
+    def add_proxy(self, proxy_dict):
+        headers = {"content-type": "application/json"}
+        data = json.dumps(proxy_dict)
+        # print(data)
+        responce = requests.post(f"http://{self.address}:{self.port}/api/add_proxy", headers=headers,
+                                data=data)
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
     def get_all_proxies(self):
         responce = requests.get(f"http://{self.address}:{self.port}/api/proxies")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+    def delete_many_proxies(self, proxies_list):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/accounts/{proxies_list}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def lock_many_proxies(self, locks):
+        headers = {"content-type": "application/json"}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/proxies?action=lock", headers=headers, data=json.dumps(locks))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def unlock_many_proxies(self, locks):
+        headers = {"content-type": "application/json"}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/proxies?action=unlock", headers=headers, data=json.dumps(locks))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def delete_proxy_by_id(self, proxy_id):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
     def get_proxy_by_id(self, proxy_id):
         responce = requests.get(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+    def update_proxy_by_id(self, proxy_id, proxy_dict):
+        headers = {"content-type": "application/json"}
+        responce = requests.put(f"http://{self.address}:{self.port}/api/account/{proxy_id}", headers=headers, data=json.dumps(proxy_dict))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
     def lock_proxy_by_id(self, proxy_id, expiry_date):
         headers = {"content-type": "application/json"}
@@ -76,55 +157,55 @@ class PAS_client():
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
     def unlock_proxy_by_id(self, proxy_id):
         responce = requests.patch(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}?action=unlock")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
-    def add_proxy(self, proxy_dict):
+
+
+    def add_resource(self, resource_dict):
         headers = {"content-type": "application/json"}
-        data = json.dumps(proxy_dict)
-        # print(data)
-        responce = requests.post(f"http://{self.address}:{self.port}/api/add_proxy", headers=headers,
-                                  data=data)
+        responce = requests.post(f"http://{self.address}:{self.port}/api/add_resource",
+                                headers=headers, data=json.dumps(resource_dict))
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
-
-    def get_all_locks(self):
-        responce = requests.get(f"http://{self.address}:{self.port}/api/locks")
-        if responce.status_code == 200:
-            return responce.json()
-        else:
-            print(responce.status_code)
+            return responce.status_code
 
     def get_all_resources(self):
         responce = requests.get(f"http://{self.address}:{self.port}/api/resources")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+    def delete_many_resources(self, resources_list):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/resources/{resources_list}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
     def get_resource_by_id(self, resource_id):
         responce = requests.get(f"http://{self.address}:{self.port}/api/resource/{resource_id}")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
 
-    def add_resource(self, resource_dict):
-        headers = {"content-type": "application/json"}
-        responce = requests.post(f"http://{self.address}:{self.port}/api/add_resource",
-                                  headers=headers, data=json.dumps(resource_dict))
+    def delete_resource_by_id(self, resource_id):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/resource/{resource_id}")
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+
 
     def interlock(self, account_id, proxy_id, expiry_date):
         headers = {"content-type": "application/json"}
@@ -133,7 +214,29 @@ class PAS_client():
         if responce.status_code == 200:
             return responce.json()
         else:
-            print(responce.status_code)
+            return responce.status_code
+
+    def get_all_locks(self):
+        responce = requests.get(f"http://{self.address}:{self.port}/api/locks")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def update_lock_by_id(self, lock_id, lock_dict):
+        headers = {"content-type": "application/json"}
+        responce = requests.put(f"http://{self.address}:{self.port}/api/lock/{lock_id}", headers=headers, data=json.dumps(lock_dict))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
+
+    def delete_lock_by_id(self, lock_id):
+        responce = requests.delete(f"http://{self.address}:{self.port}/api/lock/{lock_id}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            return responce.status_code
 
 
 if __name__ == "__main__":

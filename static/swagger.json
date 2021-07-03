@@ -600,7 +600,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "ID of the resource",
+                    "description": "Resouce id",
                     "type": "number"
                 }
             ],
@@ -684,7 +684,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "ID of the resource",
+                    "description": "Lock id",
                     "type": "number"
                 }
             ],
