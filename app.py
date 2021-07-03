@@ -19,4 +19,5 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0')
