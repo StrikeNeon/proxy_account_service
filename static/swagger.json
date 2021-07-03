@@ -720,7 +720,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update proxy",
+                "summary": "Update lock",
                 "responses": {
                     "200": {
                         "description": "OK",

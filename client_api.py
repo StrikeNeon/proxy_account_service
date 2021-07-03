@@ -39,6 +39,22 @@ class PAS_client():
         else:
             print(responce.status_code)
 
+    def lock_account_by_id(self, account_id, expiry_date):
+        headers = {"content-type": "application/json"}
+        data = {"expires_at": expiry_date.timestamp()}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/account/{account_id}?action=lock", headers=headers, data=json.dumps(data))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
+    def unlock_account_by_id(self, account_id):
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/account/{account_id}?action=unlock")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
     def get_all_proxies(self):
         responce = requests.get(f"http://{self.address}:{self.port}/api/proxies")
         if responce.status_code == 200:
@@ -48,6 +64,22 @@ class PAS_client():
 
     def get_proxy_by_id(self, proxy_id):
         responce = requests.get(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}")
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
+    def lock_proxy_by_id(self, proxy_id, expiry_date):
+        headers = {"content-type": "application/json"}
+        data = {"expires_at": expiry_date.timestamp()}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}?action=lock", headers=headers, data=json.dumps(data))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
+    def unlock_proxy_by_id(self, proxy_id):
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/proxy/{proxy_id}?action=unlock")
         if responce.status_code == 200:
             return responce.json()
         else:
@@ -89,6 +121,15 @@ class PAS_client():
         headers = {"content-type": "application/json"}
         responce = requests.post(f"http://{self.address}:{self.port}/api/add_resource",
                                   headers=headers, data=json.dumps(resource_dict))
+        if responce.status_code == 200:
+            return responce.json()
+        else:
+            print(responce.status_code)
+
+    def interlock(self, account_id, proxy_id, expiry_date):
+        headers = {"content-type": "application/json"}
+        data = {"locked_account": account_id, "locked_proxy": proxy_id, "expires_at": expiry_date.timestamp()}
+        responce = requests.patch(f"http://{self.address}:{self.port}/api/interlock", headers=headers, data=json.dumps(data))
         if responce.status_code == 200:
             return responce.json()
         else:
