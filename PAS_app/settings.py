@@ -15,3 +15,4 @@ try:
     SQLALCHEMY_MIGRATE_REPO = path.join(basedir, 'migrations')
 except FileNotFoundError:
     SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_MIGRATE_REPO = path.join(basedir, 'migrations')
