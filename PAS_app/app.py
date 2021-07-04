@@ -6,7 +6,6 @@ from .router import add_routes
 api = Api(app)
 add_routes(api)
 
-
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.json'
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(

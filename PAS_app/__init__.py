@@ -5,7 +5,7 @@ from flask_marshmallow import Marshmallow
 
 
 app = Flask(__name__)
-app.config.from_object('proxy_account_service.settings')
+app.config.from_object('PAS_app.settings')
 
 db = SQLAlchemy(app)
 migrate = Migrate()
@@ -14,4 +14,4 @@ mallow = Marshmallow(app)
 db.init_app(app)
 migrate.init_app(app, db)
 
-import proxy_account_service.models
+import PAS_app.models
